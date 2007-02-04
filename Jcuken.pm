@@ -6,6 +6,7 @@
 # under the same terms as Perl itself.
 
 # History:
+#  1.02  2007/02/04 Quality update (Test::Pod, Test::Pod::Coverage)
 #  1.01  2006/11/15 Initial revision
 
 =head1 NAME
@@ -41,7 +42,7 @@ our @EXPORT_OK   = qw/ jcu2qwe qwe2jcu /;
 our %EXPORT_TAGS = qw / /;
 our @ISA = qw/Exporter/;
 
-our $VERSION = "1.01";
+our $VERSION = "1.02";
 
 my $table = q!1 1
 q é
