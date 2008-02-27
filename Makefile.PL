@@ -10,7 +10,6 @@ WriteMakefile(
   'VERSION_FROM'  => 'Jcuken.pm',
   'LICENSE'       => 'perl',
   'PREREQ_PM' => {
-    'Text::Iconv' => 1.4,
+    'Encode' => 0,
   },
-
 );

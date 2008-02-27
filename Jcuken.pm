@@ -1,11 +1,12 @@
 # Lingua/UK/Jcuken.pm
 #
-# Copyright (c) 2006 Serguei Trouchelle. All rights reserved.
+# Copyright (c) 2006-2008 Serguei Trouchelle. All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the same terms as Perl itself.
 
 # History:
+#  1.04  2008/02/26 use Encode instead of Text::Iconv
 #  1.02  2007/02/04 Quality update (Test::Pod, Test::Pod::Coverage)
 #  1.01  2006/11/15 Initial revision
 
@@ -35,14 +36,14 @@ use Config;
 use strict;
 use warnings;
 
-use Text::Iconv;
+use Encode;
 
 our @EXPORT      = qw/ /;
 our @EXPORT_OK   = qw/ jcu2qwe qwe2jcu /;
 our %EXPORT_TAGS = qw / /;
 our @ISA = qw/Exporter/;
 
-our $VERSION = "1.02";
+our $VERSION = "1.04";
 
 my $table = q!1 1
 q é
@@ -129,10 +130,7 @@ Optional $encoding parameter allows to specify $string's encoding (default is 'w
 sub jcu2qwe {
   my $val = shift;
   my $enc = shift;
-  if ($enc) {
-    my $converter = Text::Iconv->new($enc, "windows-1251");
-    $val = $converter->convert($val);
-  } # else think of windows-1251
+  Encode::from_to($val, $enc, 'windows-1251') if $enc;
   my $res = '';
   foreach (split //, $val) {
     $_ = $jcu2qwe{$_} if $jcu2qwe{$_};
@@ -153,18 +151,13 @@ It is also used as $string encoding if you have cyrillic in it.
 sub qwe2jcu {
   my $val = shift;
   my $enc = shift;
-  my $converter;
-  if ($enc) {
-    my $converter = Text::Iconv->new($enc, "windows-1251");
-    $val = $converter->convert($val);
-  } else { # think of windows-1251
-    $enc = 'windows-1251';
-  }
-  $converter = Text::Iconv->new("windows-1251", $enc);
+  Encode::from_to($val, $enc, 'windows-1251') if $enc;
+  $enc = 'windows-1251' unless $enc;
   my $res = '';
   foreach (split //, $val) {
     $_ = $qwe2jcu{$_} if $qwe2jcu{$_};
-    $res .= $converter->convert($_);
+    Encode::from_to($_, 'windows-1251', $enc);
+    $res .= $_;
   }
   return $res;
 }
@@ -177,7 +170,7 @@ Serguei Trouchelle E<lt>F<stro@railways.dp.ua>E<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2006 Serguei Trouchelle. All rights reserved.
+Copyright (c) 2006-2008 Serguei Trouchelle. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
